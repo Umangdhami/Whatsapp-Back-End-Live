@@ -50,7 +50,7 @@ app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
 // Static file serving
-app.use(express.static(path.join(process.cwd(), process.env.MODE == 'UAT' ? './public/' : process.env.MODE == 'Live' ? "./dist/public/" : './')));
+app.use(express.static(path.join(process.cwd(), process.env.MODE == 'UAT' ? './public/' : process.env.MODE == 'LIVE' ? "./dist/public/" : './')));
 // app.use(express.static(path.join(__dirname, './public/')));
 console.log('ok path', process.cwd())
 app.use(
