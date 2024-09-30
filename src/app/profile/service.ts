@@ -76,7 +76,7 @@ class ProfileServices {
     try {
       const { id } = req.params;
       const { username } = req.body;
-      const user_id = req.user.user._id
+      const user_id = req.user.user?._id
       let file = req.file;
 
       console.log(id, 'id')
@@ -163,7 +163,7 @@ class ProfileServices {
           message: RES_MESSAGE.EM410,
         };
       }
-      const singleUsers = await Register.aggregate([
+      const profile = await Register.aggregate([
         {
           $match: {
             _id: objectId,
@@ -186,7 +186,7 @@ class ProfileServices {
 
         {
           $project: {
-            sender_id: req.user.user._id,
+            sender_id: req.user.user?._id,
             _id: 1,
             email: 1,
             phone: 1,
@@ -212,11 +212,13 @@ class ProfileServices {
         },
       ]);
 
+      console.log(profile, 1234)
+
       return {
         status: RES_STATUS.E1,
         statusCode: STATUS_CODE.EC200,
         message: RES_MESSAGE.EM200,
-        data: singleUsers
+        data: profile
       };
     } catch (err: any) {
       console.log('Error ', err)

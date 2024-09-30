@@ -118,7 +118,7 @@ class AuthServices {
                             // });
                             // login.save();
                             // console.log('login done')
-                            const login = await Login.findByIdAndUpdate(loginUser._id, {
+                            const login = await Login.findByIdAndUpdate(loginUser?._id, {
                                 token
                             })
                             // console.log('login done')

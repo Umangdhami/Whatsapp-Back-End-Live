@@ -112,7 +112,7 @@ class UserServices {
 
         {
           $project: {
-            sender_id: req.user.user._id,
+            sender_id: req.user.user?._id,
             _id: 1,
             email: 1,
             phone: 1,
@@ -160,7 +160,7 @@ class UserServices {
   async getLoginUserService(req: any) {
 
     try {
-      const id = req.user.user._id;
+      const id = req.user.user?._id;
       const objectId = new mongoose.Types.ObjectId(id);
       const singleUser = await Register.findById(id);
 
@@ -194,7 +194,7 @@ class UserServices {
 
         {
           $project: {
-            sender_id: req.user.user._id,
+            sender_id: req.user.user?._id,
             _id: 1,
             email: 1,
             phone: 1,

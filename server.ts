@@ -50,7 +50,7 @@ app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
 // Static file serving
-app.use(express.static(path.join(process.cwd(), "./dist/public/")));
+app.use(express.static(path.join(process.cwd(), process.env.MODE == 'UAT' ? './public/' : process.env.MODE == 'Live' ? "./dist/public/" : './')));
 // app.use(express.static(path.join(__dirname, './public/')));
 console.log('ok path', process.cwd())
 app.use(
@@ -76,30 +76,6 @@ app.use("/api/chat", chatRoute);
 app.use("/api/notification", notificationRoute);
 
 
-// Route handling
-
-// Start the server
-// const dirPath2 = process.cwd();
-// fs.readdir(dirPath2, (err, files) => {
-//   if (err) {
-//     console.error('Error reading directory:', err);
-//     return;
-//   }
-//   const folders = files.filter(file => fs.statSync(path.join(dirPath, file)).isDirectory());
-//   console.log(`Folders: ${folders.join(', ')}`);
-// });
-
-const dirPath = `${process.cwd()}/dist/public`
-fs.readdir(dirPath, (err, files) => {
-  if (err) {
-    console.error('Error reading directory:', err);
-    return;
-  }
-  const folders = files.filter(file => fs.statSync(path.join(dirPath, file)).isDirectory());
-  console.log(`Folders: ${folders.join(', ')}`);
-});
-
-console.log(express.static(process.cwd() + "./public/"))
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

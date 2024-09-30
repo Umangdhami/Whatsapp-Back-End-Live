@@ -17,7 +17,7 @@ export const initSocket = (io: Server) => {
         socket.disconnect();
       } else {
         try {
-          const id = decoded.user._id;
+          const id = decoded.user?._id;
           await registerModel.findByIdAndUpdate(id, { is_online: "1" });
 
           socket.broadcast.emit("getOnlineUser", id);
@@ -32,11 +32,11 @@ export const initSocket = (io: Server) => {
           });
 
           socket.on("chatRead", async (data) => {
-            if (data.length != 0) {
-              const unreadChats = data.filter((chat: any) => chat.is_read == 0);
+            if (data?.length != 0) {
+              const unreadChats = data?.filter((chat: any) => chat.is_read == 0);
 
               unreadChats.forEach(async (chat: any) => {
-                await chatModel.findByIdAndUpdate(chat._id, { is_read: 1 });
+                await chatModel.findByIdAndUpdate(chat?._id, { is_read: 1 });
               });
 
               socket.broadcast.emit("chatReadSuccess", unreadChats);
@@ -48,7 +48,7 @@ export const initSocket = (io: Server) => {
           });
 
           socket.on("newChat", async (data) => {
-            jwt.verify(data.token, secretKey, async (err:any, decoded: any) => {
+            jwt.verify(data?.token, secretKey, async (err:any, decoded: any) => {
               if (err) {
                 console.error("Token verification failed:", err);
                 socket.disconnect();
@@ -74,15 +74,27 @@ export const initSocket = (io: Server) => {
             socket.broadcast.emit("chatSendSuccess", data);
             socket.broadcast.emit("chatSendSuccess2", data);
           });
+          
+          socket.on("delete-chat-both-side", async (id, senderId) => {
+            const chat = await chatModel.findById(id);
 
-          socket.on("delete-chat", async (id, senderId) => {
+            console.log('this is deleted chat ex', chat)
+
+            if (chat) {
+              socket.broadcast.emit("chatMessageDeletedBothSide", chat, senderId);
+            } 
+            // else {
+            //   socket.broadcast.emit("chatMessageDeleted", id, senderId);
+            // }
+          });
+
+          socket.on("delete-chat-for-user-only", async (id, senderId) => {
             const chat = await chatModel.findById(id);
 
             if (chat) {
               socket.broadcast.emit("chatMessageDeleted", chat, senderId);
-            } else {
-              socket.broadcast.emit("chatMessageDeleted", id, senderId);
-            }
+            } 
+            
           });
 
           socket.on("chatRecived", async (id) => {
